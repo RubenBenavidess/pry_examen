@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../models/weather.dart';
 
 class WeatherService {
-  static const String _apiKey = '4246a5b9dd71e24c164ae0ffaf20c4c8';
+  static const String _apiKey = '32518fecd8d3b0c2470b0dfbde97f7ad';
   static const String _baseUrl = 'https://api.openweathermap.org/data/2.5';
 
   // Mapa de ciudades con sus coordenadas (latitud y longitud)
@@ -20,13 +20,12 @@ class WeatherService {
 
     for (String city in cities) {
       try {
-        final coordinates = _cityCoordinates[city]; // Obtenemos las coordenadas del mapa
+        final coordinates = _cityCoordinates[city];
 
         if (coordinates != null) {
           final lat = coordinates['lat'];
           final lon = coordinates['lon'];
 
-          // Usamos latitud y longitud directamente
           final response = await http.get(
             Uri.parse('$_baseUrl/weather?lat=$lat&lon=$lon&appid=$_apiKey&units=metric&lang=es'),
           );
@@ -35,7 +34,6 @@ class WeatherService {
             final data = json.decode(response.body);
             weatherList.add(WeatherData.fromJson(data));
           } else {
-            // Si falla la API del clima (ej. 401, 404, etc.)
             print('Error en la API del clima para $city (Código: ${response.statusCode}, Cuerpo: ${response.body})');
             weatherList.add(WeatherData(
               city: city,
@@ -45,7 +43,6 @@ class WeatherService {
             ));
           }
         } else {
-          // Si la ciudad no está en nuestro mapa de coordenadas
           print('Coordenadas no disponibles para $city. Agregando datos de prueba.');
           weatherList.add(WeatherData(
             city: city,
@@ -55,7 +52,6 @@ class WeatherService {
           ));
         }
       } catch (e) {
-        // En caso de error general de red o parsing
         print('Excepción al procesar $city: $e');
         weatherList.add(WeatherData(
           city: city,
